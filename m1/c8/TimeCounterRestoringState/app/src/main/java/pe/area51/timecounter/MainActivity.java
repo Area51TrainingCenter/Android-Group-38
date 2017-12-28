@@ -25,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String SAVED_INSTANCE_STATE_KEY_IS_RUNNING = "isRunning";
     private static final String SAVED_INSTANCE_STATE_KEY_LAST_TIME_TEXT = "lastTimeText";
 
+    private boolean isPaused;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
         timeCounterRepetitiveTask = createTimeCounterRepetitiveTask();
         startTime = 0;
         decimalFormat = new DecimalFormat("0.000");
+        isPaused = false;
     }
 
     @Override
@@ -51,9 +54,27 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putLong(SAVED_INSTANCE_STATE_KEY_START_TIME, startTime);
-        outState.putBoolean(SAVED_INSTANCE_STATE_KEY_IS_RUNNING, timeCounterRepetitiveTask.isRunning());
+        outState.putBoolean(SAVED_INSTANCE_STATE_KEY_IS_RUNNING, isPaused || timeCounterRepetitiveTask.isRunning());
         outState.putString(SAVED_INSTANCE_STATE_KEY_LAST_TIME_TEXT, textViewStatus.getText().toString());
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (isPaused) {
+            timeCounterRepetitiveTask.start(true);
+            isPaused = false;
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (timeCounterRepetitiveTask.isRunning()) {
+            timeCounterRepetitiveTask.stop();
+            isPaused = true;
+        }
     }
 
     @Override
