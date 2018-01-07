@@ -1,1 +1,1 @@
-ListandContent: Ejemplo de cómo distribuir dinámicamente 2 fragments tanto en modo "landscape" como "portrait".
+ListandContent: Listado de elementos con ListView.
